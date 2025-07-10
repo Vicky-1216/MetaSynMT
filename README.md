@@ -13,4 +13,4 @@ In addition to the primary task of synergy prediction, a side effect prediction 
 
 ## Usage
 
-Run the model by executing the start_train.py file.
+Run the model by executing the Synergytrain.py file.
