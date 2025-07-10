@@ -36,13 +36,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.enabled = False
 #print('random_seed:', random_seed)
-# 设置随机种子
 # np.random.seed(42)
-# random.seed(42) #种子是42
+# random.seed(42) 
 
 # print
 # import random
-# random.seed()  # 使用系统时间作为种子
+# random.seed()  
 # random_seed = random.randint(0, 2**31 - 1)
 # print('random_seed:', random_seed)
 # some overall fixed parameters
@@ -50,8 +49,8 @@ torch.backends.cudnn.enabled = False
 num_ntype = 3
 # for the main_net
 dropout_rate = 0.5
-lr = 0.0005 #原来是0.005
-weight_decay = 0.001#原来是0.001
+lr = 0.0005 
+weight_decay = 0.001
 
 # the aim of use_masks is to mask drug-drug pairs occurring in the batch, which contains these pairs as the known samples
 use_masks = [[False, False, False, True],
@@ -406,7 +405,7 @@ def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rn
 
 
 if __name__ == '__main__':
-    ##lr = 0.0001  # 原来是0.005  weight0.001 原0.001 dropout=0.5原0.5
+
     ap = argparse.ArgumentParser()
     ap.add_argument('--root-prefix', type=str,
                     default='./static/syn/', # the folder to store the model input for current independent repeat
@@ -420,16 +419,16 @@ if __name__ == '__main__':
     ap.add_argument('--rnn-type-main', default='rnn',
                     help='Type of the aggregator in the main model. Default is rnn.')
     ap.add_argument('--epoch', type=int, default=30, help='Number of epochs. Default is 50.')
-    ap.add_argument('--patience', type=int, default=10, help='Patience. Default is 10.')##原来是8
-    ap.add_argument('--batch-size', type=int, default=16,##原来是32
+    ap.add_argument('--patience', type=int, default=10, help='Patience. Default is 10.')
+    ap.add_argument('--batch-size', type=int, default=16,
                     help='Batch size. Please choose an odd value, because of the way of calculating val/test labels of our model. Default is 32.')
-    ap.add_argument('--samples', type=int, default=100, #采样的邻居节点数 原来是100
+    ap.add_argument('--samples', type=int, default=100, 
                     help='Number of neighbors sampled in the parse function of main model. Default is 100.')
     ap.add_argument('--repeat', type=int, default=1, help='Repeat the training and testing for N times. Default is 1.')
     # if it is set to False, the GAT layer will ignore the feature of the central node itself
     ap.add_argument('--attn-switch-main', default=True,
                     help='whether need to consider the feature of the central node when using GAT layer in the main model')
-    ap.add_argument('--rnn-concat-main', default=False,##原来是false
+    ap.add_argument('--rnn-concat-main', default=False,
                     help='whether need to concat the feature extracted from rnn with the embedding from GAT layer in the main model')
     ap.add_argument('--whether-disease', default=[True, False],
                     help='Whether use the real disease data to replace one-hot numerical encoding')
