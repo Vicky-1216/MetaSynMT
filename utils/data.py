@@ -9,7 +9,7 @@ import os
 
 
 #
-def load_data_te(prefix): # your folder to store the required original data ='C:/Users/Administrator/Desktop/Muthene-main/echino_dataset/fold4/'
+def load_data_te(prefix): # your folder to store the required original data ='C:/Users/Administrator/Desktop/Muthene-main/data/fold/'
     #print('the path of source file is :', prefix)
     # read drug adjlist files using relative index 四种不同元路径的邻接列表数据
     in_file = open(prefix + '0/0-1-0.adjlist', 'r')#0-1-0是元路径
@@ -86,7 +86,7 @@ def load_data_te(prefix): # your folder to store the required original data ='C:
            train_val_test_drug_drug_samples, train_val_test_drug_drug_labels , disease_gene, similar
 
 #数据包括邻接列表、元路径实例、邻接矩阵、节点类型掩码、实体映射字典、药物-药物样本和标签
-def load_data_se(prefix): # your folder to store the required original data ='C:/Users/Administrator/Desktop/Muthene-main/echino_dataset/side/fold4/'
+def load_data_se(prefix): # your folder to store the required original data ='C:/Users/Administrator/Desktop/Muthene-main/data/side/fold/'
     #print('the path of source file is :', prefix)
 
     # read drug adjlist files using relative index 四种不同元路径的邻接列表数据
@@ -152,7 +152,7 @@ def load_data_se(prefix): # your folder to store the required original data ='C:
            train_val_test_drug_drug_samples, train_val_test_drug_drug_labels
 #TE模块 需要药物 细胞系和AE DNN用的
 
-def load_HNEMA_DDI_data_te2(prefix='D:/daima/Muthene-main/echino_dataset/fold1/'): # your folder to store the required original data
+def load_HNEMA_DDI_data_te2(prefix='D:/daima/Muthene-main/data/fold/'): # your folder to store the required original data
     print('the path of source file is :', prefix)
     # read drug adjlist files using relative index 四种不同元路径的邻接列表数据
     in_file = open(prefix + '0/0-1-0.adjlist', 'r')#0-1-0是元路径
@@ -221,7 +221,7 @@ def load_HNEMA_DDI_data_te2(prefix='D:/daima/Muthene-main/echino_dataset/fold1/'
            [drug2id_dict, target2id_dict, disease2id_dict], \
            train_val_test_drug_drug_samples, train_val_test_drug_drug_labels, cellline_expression
 #是DNN用的
-def load_DNN_DDI_data_te2(prefix='D:/daima/Muthene-main/echino_dataset/fold1/'): # your folder to store the required original data
+def load_DNN_DDI_data_te2(prefix='D:/daima/Muthene-main/data/fold/'): # your folder to store the required original data
     print('the path of source file is :', prefix)
 
     in_file = open(prefix + 'drug2absid_dict.pickle', 'rb')
