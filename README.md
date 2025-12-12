@@ -10,6 +10,16 @@ In addition to the primary task of synergy prediction, a side effect prediction 
 ⦁	Python >= 3.9
 ⦁	Pytorch >= 1.10
 ⦁	dgl >= 11.0
+⦁ sklearn >= 1.0.2
+⦁ pandas >= 1.3.5
+
+## Main Data:
+CCLE_expression.csv: Downloaded original DepMap gene expression data.
+drugcomb_alldruginfo_dict.pickle: Collected information of involved drugs.
+drugcomb_synergy_score.csv: Collected drug-drug-cell line synergy score samples.
+twosides_side_effect.csv: Collected drug-drug adverse effect samples.
+drug_target_interaction.csv: Collected drug-target interaction samples.
+target_target_interaction.csv: Collected target-target interaction samples.
 
 ## Usage
 
