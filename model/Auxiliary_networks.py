@@ -34,7 +34,7 @@ class side_effect_predictor(nn.Module):
         # in_feats:输入 dimension of drug embedding
         # h_feats: 输出number of side effects
         super(side_effect_predictor, self).__init__()
-        self.lin1 = torch.nn.Linear(in_feats * 2, h_feats)#*2 即之和
+        self.lin1 = torch.nn.Linear(in_feats * 2, h_feats)#*2 和
         if dropout_rate > 0:
             self.dropout = nn.Dropout(dropout_rate)
         else:
@@ -77,7 +77,7 @@ class DNN_predictor(nn.Module):
                 self.linears.append(torch.nn.ReLU())
                 self.linears.append(nn.Dropout(dropout))
 
-    def forward(self, drug_embedding1, drug_embedding2, cellline_idx, se_labels_batch=None): #se_labels_batch是se任务得到的
+    def forward(self, drug_embedding1, drug_embedding2, cellline_idx, se_labels_batch=None): #se_labels_batch
         if (self.whether_CCLE[0] == True) and (self.whether_CCLE[1] == True):
             # use cell line information directly
             cellline_embedding = self.cellline_expression[cellline_idx]
@@ -102,7 +102,7 @@ class therapeutic_effect_DNN_predictor(nn.Module):
 ##  def __init__(self, cellline_expression, cellline_feats, in_feats, emd_feats, layer_list, output_concat=False, concat_feats=0, dropout=0.0, input_dropout=0.0, whether_CCLE=[True, True]):
     def __init__(self, cellline_expression, similar, cellline_feats, in_feats, emd_feats, layer_list, output_concat=False, dropout=0.0, input_dropout=0.0, whether_CCLE=[True, True]):
         print('TE predictor hyper-paramters:', cellline_feats, in_feats, emd_feats, layer_list, output_concat, dropout, input_dropout, whether_CCLE)    ## output_concat, concat_feats, dropout
-        super(therapeutic_effect_DNN_predictor, self).__init__() #cellline_feats细胞系特征的维度 in_feats每个药物的总嵌入维度 emd_feats：细胞系嵌入的维度 output_concat：是否连接不良反应 whether_CCLE：是否使用细胞系表达数据和是否进行维度缩减的标志位
+        super(therapeutic_effect_DNN_predictor, self).__init__()
         self.whether_CCLE = whether_CCLE
         self.emd_feats = emd_feats
 
@@ -194,7 +194,7 @@ class side_effect_DNN_predictor2(nn.Module):
 ##  def __init__(self, cellline_expression, cellline_feats, in_feats, emd_feats, layer_list, output_concat=False, concat_feats=0, dropout=0.0, input_dropout=0.0, whether_CCLE=[True, True]):
     def __init__(self, in_feats, layer_list, dropout=0.0, input_dropout=0.0):# output_concat=False, emd_feats,
         print('SE predictor hyper-paramters:', in_feats,layer_list, dropout, input_dropout)    ## output_concat, concat_feats, dropout
-        super(side_effect_DNN_predictor2, self).__init__() #cellline_feats细胞系特征的维度 in_feats每个药物的总嵌入维度 emd_feats：细胞系嵌入的维度 output_concat：是否连接不良反应 whether_CCLE：是否使用细胞系表达数据和是否进行维度缩减的标志位
+        super(side_effect_DNN_predictor2, self).__init__() 
         ##self.whether_CCLE = whether_CCLE
         ##self.emd_feats = emd_feats
 
