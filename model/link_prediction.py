@@ -33,7 +33,7 @@ class HNEMA_lp_layer(nn.Module):
                                                    rnn_concat=rnn_concat)
 
         # note that the actual input dimension should consider the number of heads as multiple head outputs are concatenated together实际的输入维度应该考虑多个头部输出连接在一起时的头部数量
-        if (rnn_concat == True):#否应该在 RNN 的输出中使用拼接 双向的就得拼接
+        if (rnn_concat == True):#否应该在 RNN 的输出中使用拼接
             #self.fc_drug = nn.Linear(in_dim  * 2, out_dim, bias=True)#
             self.fc_drug = nn.Linear(in_dim * num_heads * 2, out_dim, bias=True)
             # self.fc_target = nn.Linear(in_dim * num_heads * 2, out_dim, bias=True)
@@ -78,7 +78,7 @@ class HNEMA_link_prediction(nn.Module):
         self.hidden_dim = hidden_dim
         self.args = args
 
-        # node type specific transformation特定于节点类型的转换 两个类型 drug和target 并且两个输入维度不一样但输出维度都是64
+        # node type specific transformation特定于节点类型的转换 两个类型
         self.fc_list = nn.ModuleList([nn.Linear(feats_dim, hidden_dim, bias=True) for feats_dim in feats_dim_list])#创建了一个包含多个线性层的列表，并将其封装在 ModuleList
         # feature dropout after transformation                                                                    #每个 feats_dim 创建一个输入维度为 feats_dim、输出维度为 hidden_dim 的线性层
         if dropout_rate > 0:
@@ -131,7 +131,7 @@ class HNEMA_link_prediction(nn.Module):
 
         # attention_scores = [atten_drug1, atten_drug2]
         # for i, score in enumerate(attention_scores):
-        #     # 假设每个得分是一个张量，我们打印其值
+        #     # 假设每个得分是一个张量
         #     print(f"Attention scores for drug {i}: {score}")
 
         # with open('C:/Users/Administrator/Desktop/2.csv', mode='w', newline='', encoding='utf-8') as csvfile:
