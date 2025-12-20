@@ -34,16 +34,11 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.enabled = False
 print('random_seed:', random_seed)
-# import random
-# random.seed()  # 使用系统时间作为种子
-# random_seed = random.randint(0, 2**31 - 1)
-# print('random_seed:', random_seed)
-# some overall fixed parameters
-# drug/target/cell line
-num_ntype = 2#不用疾病
+# drug/target
+num_ntype = 2
 # for the main_net
 dropout_rate = 0.3
-lr = 0.0005 #原来是0.005
+lr = 0.0005 
 weight_decay = 0.001
 
 # the aim of use_masks is to mask drug-drug pairs occurring in the batch, which contains these pairs as the known samples
@@ -57,14 +52,14 @@ num_drug = 232
 num_target = 3871
 
 # involved_metapaths = [
-#     [(0, 1, 0), (0, 1, 1, 0), (0, 1, 1, 1, 0), (0, 1, 1,1, 1, 0),(0, 'se', 0)]]#原来是te  (0, 1, 1, 0), (0, 1, 1, 1, 0),
+#     [(0, 1, 0), (0, 1, 1, 0), (0, 1, 1, 1, 0), (0, 1, 1,1, 1, 0),(0, 'se', 0)]]
 
 # for the case that just load model for test
 only_test = False
 
 # the type of synergy score to be predicted
 # S_mean, synergy_zip, synergy_loewe, synergy_hsa, synergy_bliss (corresponding to 0,1,2,3,4, respectively)
-predicted_se_type = 0 #这里的标签直接用label
+predicted_se_type = 0 
 
 def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rnn_type_main,
                         num_epochs, patience, batch_size, neighbor_samples, repeat, attn_switch_main, rnn_concat_main,#hidden_dim_aux,
@@ -93,13 +88,9 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
     for i in range(num_ntype):
         dim = (type_mask == i).sum()
         in_dims.append(dim)
-
-        # 方法5：保持稀疏结构但值随机
         indices = np.vstack((np.arange(dim), np.arange(dim)))
         indices = torch.LongTensor(indices)
-        # 只将对角线值改为随机值
-        values = torch.rand(dim)  # 随机值代替全1
-
+        values = torch.rand(dim) 
         features_list.append(torch.sparse.FloatTensor(indices, values, torch.Size([dim, dim])).to(device))
 
     # ECFP6 of drugs
@@ -193,9 +184,9 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         val_sample_idx_generator = index_generator(batch_size=batch_size//2, num_data=len(val_drug_drug_samples), shuffle=False)
         test_sample_idx_generator = index_generator(batch_size=batch_size//2, num_data=len(test_drug_drug_samples), shuffle=False)
 
-        ##te_criterion = torch.nn.MSELoss(reduction='mean')回归问题
+        ##te_criterion = torch.nn.MSELoss(reduction='mean')
         se_criterion = torch.nn.BCELoss(reduction='mean')
-        ##se_criterion = torch.nn.BCEWithLogitsLoss(reduction='mean')#输出可以不是0-1
+        ##se_criterion = torch.nn.BCEWithLogitsLoss(reduction='mean')
 
         print('total epoch number is:',num_epochs)
         if only_test == False:
@@ -236,7 +227,7 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
                     se_output = sigmoid(se_net(row_drug_composite_embedding, col_drug_composite_embedding)) #, train_cellline_idx))##用了sigmoid
 
                     se_loss = se_criterion(se_output, train_se_labels_batch)
-                    train_total_loss_batch = se_loss#没有AE的总共损失
+                    train_total_loss_batch = se_loss
 
                     t2 = time.time()
                     dur2.append(t2 - t1)
@@ -264,10 +255,6 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
                         # for generating drug-drug pairs with the opposite drug order
                         # val_drug_drug_batch_ = val_drug_drug_batch[:, [1, 0]]
                         val_drug_drug_batch_ = val_drug_drug_batch[:, [1, 0, 2]]
-                        # print("Number of columns:", val_drug_drug_batch_.shape[1])
-                        # print("Shape of val_drug_drug_batch:", val_drug_drug_batch.shape)
-                        # print("Shape of val_drug_drug_batch_:", val_drug_drug_batch_.shape)
-
 
                         val_drug_drug_batch_combined = np.concatenate([val_drug_drug_batch,val_drug_drug_batch_],axis=0).tolist()
 
@@ -381,26 +368,6 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
             test_se_label_list = torch.cat(test_se_label_list)
             test_se_label_list = test_se_label_list.cpu().numpy()
             # test_te_label_list = scaler.inverse_transform(test_te_label_list)
-
-       ## print('test_se_results:', test_se_results)
-       ## print('test_se_label_list:', test_se_label_list)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_results.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_results)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_label_list.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_label_list)
-        # print('test_se_results:', test_se_results)
-        # print('test_se_label_list:', test_se_label_list)
-        with open('E:/Muthene-main/echino_dataset/side/fold5/test_se_safe_results.csv', 'w', newline='') as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerows(test_se_results)
-        # with open('C:/Users/Administrator/Desktop/Muthene-main/echino_dataset/side/fold2/test_se_label_list.csv', 'w', newline='') as csv_file:
-        #     writer = csv.writer(csv_file)
-        #     writer.writerows(test_se_label_list)
-        # print('the size of test_se_results:', test_se_results.shape)
-        # print('the size of test_se_label_list:', test_se_label_list.shape)
-
         # 计算 ROC AUC 和 PR AUC
         roc_auc = roc_auc_score(test_se_label_list, test_se_results)
         pr_auc = average_precision_score(test_se_label_list, test_se_results)
@@ -408,7 +375,6 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         accuracy = accuracy_score(test_se_label_list, test_se_results.round())
         f1 = metrics.f1_score(test_se_label_list, test_se_results.round())
         recall = recall_score(test_se_label_list, test_se_results.round())
-        # 打印结果
         print('ROC AUC =', roc_auc)
         print('PR AUC =', pr_auc)
         print('ACC =', accuracy)
@@ -426,7 +392,7 @@ if __name__ == '__main__':
     # part1 (for meta-path embedding generation)
     ap = argparse.ArgumentParser(description='Muthene SE module variant testing for drug-drug link prediction')
     ap.add_argument('--root-prefix', type=str,
-                    default='E:/Muthene-main/echino_dataset/side/fold3/', # the folder to store the model input for current independent repeat
+                    default='./data/fold/', # the folder to store the model input for current independent repeat
                     help='root from which to read the original input files')
     ap.add_argument('--hidden-dim-main', type=int, default=64,
                     help='Dimension of the node hidden state in the main model. Default is 64.')
@@ -437,16 +403,16 @@ if __name__ == '__main__':
     ap.add_argument('--rnn-type-main', default='rnn',
                     help='Type of the aggregator in the main model. Default is rnn.')
     ap.add_argument('--epoch', type=int, default=30, help='Number of epochs. Default is 50.')
-    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')##原来是8
-    ap.add_argument('--batch-size', type=int, default=16,##原来是32
+    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')
+    ap.add_argument('--batch-size', type=int, default=16,
                     help='Batch size. Please choose an odd value, because of the way of calculating val/test labels of our model. Default is 32.')
-    ap.add_argument('--samples', type=int, default=100, #采样的邻居节点数 原来是100
+    ap.add_argument('--samples', type=int, default=100, #采样的邻居节点数
                     help='Number of neighbors sampled in the parse function of main model. Default is 100.')
     ap.add_argument('--repeat', type=int, default=1, help='Repeat the training and testing for N times. Default is 1.')
     # if it is set to False, the GAT layer will ignore the feature of the central node itself
     ap.add_argument('--attn-switch-main', default=True,
                     help='whether need to consider the feature of the central node when using GAT layer in the main model')
-    ap.add_argument('--rnn-concat-main', default=False,##原来是false
+    ap.add_argument('--rnn-concat-main', default=False,
                     help='whether need to concat the feature extracted from rnn with the embedding from GAT layer in the main model')
     # part2
     # ap.add_argument('--hidden-dim-aux', type=int, default=64,
@@ -464,3 +430,4 @@ if __name__ == '__main__':
     run_model_HNEMA_DDI(args.root_prefix, args.hidden_dim_main, args.num_heads_main, args.attnvec_dim_main, args.rnn_type_main, args.epoch,
                         args.patience, args.batch_size, args.samples, args.repeat, args.attn_switch_main, args.rnn_concat_main, #args.hidden_dim_aux,
                         args.layer_list, args.pred_in_dropout, args.pred_out_dropout,  args)
+
