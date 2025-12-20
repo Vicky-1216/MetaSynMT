@@ -64,7 +64,7 @@ only_test = False
 
 # the type of synergy score to be predicted
 # S_mean, synergy_zip, synergy_loewe, synergy_hsa, synergy_bliss (corresponding to 0,1,2,3,4, respectively)
-predicted_te_type = 0 #这里的标签直接用label
+predicted_te_type = 0 
 
 # def run_model_HNEMA_DDI(root_prefix, hidden_dim_main,  rnn_type_main,
 #                         num_epochs, patience, batch_size, neighbor_samples, repeat, rnn_concat_main,
@@ -93,16 +93,10 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
     for i in range(num_ntype):
         dim = (type_mask == i).sum()
         in_dims.append(dim)
-
-        # 方法5：保持稀疏结构但值随机
         indices = np.vstack((np.arange(dim), np.arange(dim)))
         indices = torch.LongTensor(indices)
-        # 只将对角线值改为随机值
-        values = torch.rand(dim)  # 随机值代替全1
-
+        values = torch.rand(dim)
         features_list.append(torch.sparse.FloatTensor(indices, values, torch.Size([dim, dim])).to(device))
-
-    # ECFP6 of drugs
 ##    morgan_values = all_drug_morgan.data
 ##    morgan_indices = np.vstack((all_drug_morgan.row, all_drug_morgan.col))
 ##    i = torch.LongTensor(morgan_indices)
@@ -197,7 +191,7 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         test_sample_idx_generator = index_generator(batch_size=batch_size//2, num_data=len(test_drug_drug_samples), shuffle=False)
         train_sample_idx_generator = index_generator(batch_size=batch_size, num_data=len(train_drug_drug_samples))
 
-        ##te_criterion = torch.nn.MSELoss(reduction='mean')回归问题
+        ##te_criterion = torch.nn.MSELoss(reduction='mean')
         te_criterion = torch.nn.BCELoss(reduction='mean')
         ##te_criterion = torch.nn.BCEWithLogitsLoss(reduction='mean')
 
@@ -247,7 +241,7 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
                     te_output = sigmoid(te_net(row_drug_composite_embedding, col_drug_composite_embedding, train_disease_idx))##用了sigmoid
 
                     te_loss = te_criterion(te_output, train_te_labels_batch)
-                    train_total_loss_batch = te_loss#没有AE的总共损失
+                    train_total_loss_batch = te_loss
 
                     t2 = time.time()
                     dur2.append(t2 - t1)
@@ -373,8 +367,8 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
 
                 te_output = sigmoid(te_net(row_drug_composite_embedding, col_drug_composite_embedding, test_disease_idx))#用了sigmoid
                 te_output = (te_output[:te_output.shape[0]//2,:] + te_output[te_output.shape[0]//2:,:])/2
-        ##        print(test_drug_drug_idx_spec) #32乘2
-        ##        print(te_output.shape) #16乘1
+        ##        print(test_drug_drug_idx_spec) 
+        ##        print(te_output.shape) 
                 test_te_results.append(te_output)##
                 test_te_label_list.append(test_te_labels_batch)##
 
@@ -398,7 +392,7 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         pr_auc = average_precision_score(test_te_label_list, test_te_results)
         #
         # # 计算 ACC
-        # threshold = 0.5  # 设定阈值
+        # threshold = 0.5  
         # binary_predictions = (test_te_results > threshold).astype(int)
         # accuracy = accuracy_score(test_te_label_list, binary_predictions)
 
