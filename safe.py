@@ -70,8 +70,7 @@ involved_metapaths = [
 only_test = True
 
 # the type of synergy score to be predicted
-predicted_te_type = 0 #这里的标签直接用label
-
+predicted_te_type = 0 
 def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rnn_type_main,
                         num_epochs, patience, batch_size, neighbor_samples, repeat, attn_switch_main, rnn_concat_main,
                         hidden_dim_aux, layer_list, pred_in_dropout, pred_out_dropout, output_concat, whether_disease, args):
@@ -116,27 +115,22 @@ def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rn
     with open('./static/syn/drug2absid_dict.pickle', 'rb') as f:
         drug_dict = pickle.load(f)
 
-    # 定义一个函数，用于查找药物名称对应的序号
+    # 用于查找药物名称对应的序号
     def find_drug_code(name, drug_dict):
         return drug_dict.get(name, None)  # 如果药物名不在字典中，返回None
 
-    # 应用这个函数到CSV文件的第一列和第二列
     df['Drug1'] = df['drug1'].apply(lambda x: find_drug_code(x, drug_dict))
     df['Drug2'] = df['drug2'].apply(lambda x: find_drug_code(x, drug_dict))
 
-    # 假设第三列的列名是'Column3'，直接将第三列的数据复制到新列
     df['disease'] = df['disease']
 
-    # 将转换后的数据转换为列表
     column1_codes = df['Drug1'].tolist()
     column2_codes = df['Drug2'].tolist()
     column3_data = df['disease'].tolist()
 
-    # 将三个列表组合为一个列表的列表（二维列表），每个子列表包含三个元素
     # test_drug_drug_samples = [(code1, code2, data) for code1, code2, data in
     #                              zip(column1_codes, column2_codes, column3_data)]
     test_drug_drug_samples = list(zip(column1_codes, column2_codes, column3_data))
-    # 如果你需要将DataFrame转换为列表
     #test_drug_drug_samples = df.values.tolist()
     test_drug_drug_array = np.array(test_drug_drug_samples)
     test_drug_drug_samples_dict = {'test_drug_drug_samples': test_drug_drug_array}
@@ -248,7 +242,7 @@ def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rn
                    # te_output = te_net(row_drug_composite_embedding, col_drug_composite_embedding, train_disease_idx)##用了sigmoid
 
                     te_loss = te_criterion(te_output, train_te_labels_batch)
-                    train_total_loss_batch = te_loss#没有AE的总共损失
+                    train_total_loss_batch = te_loss
 
                     t2 = time.time()
                     dur2.append(t2 - t1)
@@ -363,8 +357,8 @@ def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rn
               #  te_output = te_net(row_drug_composite_embedding, col_drug_composite_embedding, test_disease_idx)
                 te_output = (te_output[:te_output.shape[0]//2,:] + te_output[te_output.shape[0]//2:,:])/2
                 #print(test_drug_drug_idx_spec.shape)
-        ##        print(test_drug_drug_idx_spec) #32乘2
-        ##        print(te_output.shape) #16乘1
+        ##        print(test_drug_drug_idx_spec) 
+        ##        print(te_output.shape) 
                 test_te_result.append(te_output)##
                 #test_te_label_list.append(test_te_labels_batch)##
                 #print(test_te_result)
@@ -383,25 +377,6 @@ def run_model(root_prefix, hidden_dim_main, num_heads_main, attnvec_dim_main, rn
             # test_te_label_list = scaler.inverse_transform(test_te_label_list)
        ## print('test_se_results:', test_se_results)
        ## print('test_se_label_list:', test_se_label_list)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_results.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_results)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_label_list.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_label_list)
-        # print('test_te_results:', test_te_results)
-        # # print('test_te_label_list:', test_te_label_list)
-        # with open('C:/Users/Administrator/Desktop/Muthene-main/echino_dataset/fold5/pingtai.csv', 'w', newline='') as csv_file:
-        #     writer = csv.writer(csv_file)
-        #     writer.writerows(test_te_results)
-        #with open('C:/Users/Administrator/Desktop/Muthene-main/echino_dataset/fold1/test_te_label_list.csv', 'w', newline='') as csv_file:
-        #    writer = csv.writer(csv_file)
-        #    writer.writerows(test_te_label_list)
-        # print('the size of test_te_results:', test_te_results.shape)
-        # print('the size of test_te_label_list:', test_te_label_list.shape)
-
-
-    # pd.DataFrame(VAL_L0SS, columns=['VAL_LOSS']).to_csv(root_prefix+'checkpoint/VAL_LOSS.csv')
 
 
 if __name__ == '__main__':
@@ -447,3 +422,4 @@ if __name__ == '__main__':
     run_model(args.root_prefix, args.hidden_dim_main, args.num_heads_main, args.attnvec_dim_main, args.rnn_type_main, args.epoch,
                         args.patience, args.batch_size, args.samples, args.repeat, args.attn_switch_main, args.rnn_concat_main, args.hidden_dim_aux,
                         args.layer_list, args.pred_in_dropout, args.pred_out_dropout, args.output_concat, args.whether_disease, args)
+
