@@ -47,7 +47,7 @@ from model.Trans_encoder import MultiHeadedAttention, PositionwiseFeedForward, E
 
 
 
-class HNEMA_metapath_specific(nn.Module):#specific 用于处理元路径特定的节点嵌入学习任务#被下面的用了
+class HNEMA_metapath_specific(nn.Module):#specific 用于处理元路径特定的节点嵌入学习任务
     def __init__(self,
                  out_dim,
                  #hidden_dim,
@@ -136,7 +136,7 @@ class HNEMA_metapath_specific(nn.Module):#specific 用于处理元路径特定�
 
         # node-level attention节点级注意
         # attention considers the center node embedding or not
-        if self.attn_switch:# #为True，则表示要使用两个不同的注意力参数 为什么是两个
+        if self.attn_switch:# #为True，则表示要使用两个不同的注意力参数
             # self.attn1 = nn.Linear(out_dim, num_heads, bias=False)
             self.attn1 = nn.Linear(num_heads * out_dim, num_heads, bias=False)# # Linear(in_features=512, out_features=8)
             self.attn2 = nn.Parameter(torch.empty(size=(1, num_heads, out_dim)))#
@@ -165,7 +165,7 @@ class HNEMA_metapath_specific(nn.Module):#specific 用于处理元路径特定�
         ft = edges.data['eft'] * edges.data['a_drop']
         return {'ft': ft}
 
-    def message_passing_bi_lstm(self, edges): #定义了用于双向 LSTM 的消息传递规则
+    def message_passing_bi_lstm(self, edges): #定义了用于双向的消息传递规则
         avg = edges.data['eft']
         return {'avg': avg}
 
@@ -446,8 +446,8 @@ class HNEMA_ctr_ntype_specific(nn.Module):#用于处理多种metapath的模型 #
         return h, beta # #节点特征表示 h，以及用于注意力机制的权重 beta
 #HNEMA_ctr_ntype_specific类是一个用于处理具有不同 metapath 的输入数据的模型，它包含了多个 HNEMA_metapath_specific 类的实例，并在这些实例的基础上实现了对不同 metapath 的加权汇总。
 
-#下面的模型没用transformer了
-# class HNEMA_ctr_ntype_specific_transformer(nn.Module):#没用了
+
+# class HNEMA_ctr_ntype_specific_transformer(nn.Module):
 #     def __init__(self,
 #                  num_metapaths,
 #                  etypes_list,
