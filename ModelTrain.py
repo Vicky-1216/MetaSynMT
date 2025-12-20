@@ -1,5 +1,3 @@
-# Instead of the framework name in the manuscript (i.e., Muthene), we use HNEMA (Heterogeneous Network Embedding with Meta-path Aggregation) here to define the function.
-# Besides, we sincerely thank Fu et al. open the source code of MAGNN at https://github.com/cynricfu/MAGNN. MAGNN helps us to finish message passing of nodes on heterogeneous network.
 import time
 import argparse
 import torch
@@ -48,7 +46,7 @@ print('random_seed:', random_seed)
 num_ntype = 3#3
 # for the main_net
 dropout_rate = 0.5
-lr = 0.0005 #原来是0.005
+lr = 0.0005 
 weight_decay = 0.001
 # the implementation of Muthene using ECFP6 + selected 60 cell lines (described by CCLE gene expression data) without adverse effect module
 
@@ -71,7 +69,7 @@ only_test = False
 
 # the type of synergy score to be predicted
 # S_mean, synergy_zip, synergy_loewe, synergy_hsa, synergy_bliss (corresponding to 0,1,2,3,4, respectively)
-predicted_te_type = 0 #这里的标签直接用label
+predicted_te_type = 0 
 
 # def run_model_HNEMA_DDI(root_prefix, hidden_dim_main,  rnn_type_main,
 #                         num_epochs, patience, batch_size, neighbor_samples, repeat, rnn_concat_main,
@@ -98,38 +96,14 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
     #     values = torch.FloatTensor(np.ones(dim))
     #     features_list.append(torch.sparse.FloatTensor(indices, values, torch.Size([dim, dim])).to(device))
 
-    # for i in range(num_ntype):
-    #     dim = (type_mask == i).sum()
-    #     in_dims.append(dim)
-    #
-    #     if dim > 0:
-    #         # 生成序列号数字 (0, 1, 2, ..., dim-1)
-    #         sequence_numbers = torch.arange(dim).float()
-    #
-    #         # 创建稀疏对角矩阵，对角线值为序列号数字
-    #         indices = np.vstack((np.arange(dim), np.arange(dim)))
-    #         indices = torch.LongTensor(indices)
-    #         values = torch.FloatTensor(sequence_numbers)  # 序列号数字作为对角线值
-    #
-    #         features_list.append(torch.sparse.FloatTensor(indices, values, torch.Size([dim, dim])).to(device))
-    #     else:
-    #         # 处理空维度情况
-    #         features_list.append(
-    #             torch.sparse.FloatTensor(torch.LongTensor([]), torch.FloatTensor([]), torch.Size([0, 0])).to(device))
-
     for i in range(num_ntype):
         dim = (type_mask == i).sum()
         in_dims.append(dim)
-
-        # 方法5：保持稀疏结构但值随机
         indices = np.vstack((np.arange(dim), np.arange(dim)))
         indices = torch.LongTensor(indices)
-        # 只将对角线值改为随机值
-        values = torch.rand(dim)  # 随机值代替全1
-
+        values = torch.rand(dim) 
         features_list.append(torch.sparse.FloatTensor(indices, values, torch.Size([dim, dim])).to(device))
 
-    # ECFP6 of drugs
 ##    morgan_values = all_drug_morgan.data
 ##    morgan_indices = np.vstack((all_drug_morgan.row, all_drug_morgan.col))
 ##    i = torch.LongTensor(morgan_indices)
@@ -138,7 +112,7 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
 ##    all_drug_morgan = torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense().to(device)
 
     # gene expression data of cell lines
-##    cellline_expression = torch.tensor(cellline_expression, dtype=torch.float32).to(device)
+##  cellline_expression = torch.tensor(cellline_expression, dtype=torch.float32).to(device)
     cellline_expression = torch.tensor(cellline_expression, dtype=torch.float32).to(device)
     similar = torch.tensor(similar, dtype=torch.float32).to(device)
     train_drug_drug_samples = train_val_test_drug_drug_samples['train_drug_drug_samples']
@@ -407,8 +381,8 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
                 te_output = sigmoid(te_net(row_drug_composite_embedding, col_drug_composite_embedding, test_cellline_idx))#用了sigmoid
                 te_output = (te_output[:te_output.shape[0]//2,:] + te_output[te_output.shape[0]//2:,:])/2
                 print(test_drug_drug_idx_spec.shape)
-        ##        print(test_drug_drug_idx_spec) #32乘2
-        ##        print(te_output.shape) #16乘1
+        ##        print(test_drug_drug_idx_spec) 
+        ##        print(te_output.shape)
                 test_te_results.append(te_output)##
                 test_te_label_list.append(test_te_labels_batch)##
 
@@ -427,51 +401,17 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
             test_te_label_list = test_te_label_list.cpu().numpy()
             # test_te_label_list = scaler.inverse_transform(test_te_label_list)
 
-       ## print('test_se_results:', test_se_results)
-       ## print('test_se_label_list:', test_se_label_list)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_results.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_results)
-       ## with open('D:/daima/Muthene-main/Muthene_dataset/fold1/test_se_label_list.csv', 'w', newline='') as csv_file:
-       ##     writer = csv.writer(csv_file)
-       ##     writer.writerows(test_se_label_list)
-        print('test_te_results:', test_te_results)
-        print('test_te_label_list:', test_te_label_list)
-        # with open('E:/Muthene-main/echino_dataset/fold5/test_te_safe.csv', 'w', newline='') as csv_file:
-        #     writer = csv.writer(csv_file)
-        #     writer.writerows(test_te_results)
-        # with open('E:/Muthene-main/echino_dataset/fold5/test_te_safe_label_list.csv', 'w', newline='') as csv_file:
-        #    writer = csv.writer(csv_file)
-        #    writer.writerows(test_te_label_list)
-        # print('the size of test_te_results:', test_te_results.shape)
-        # print('the size of test_te_label_list:', test_te_label_list.shape)
-        # TE_MSE = mean_squared_error(test_te_label_list, test_te_results)
-        # TE_RMSE = np.sqrt(TE_MSE)
-        # TE_MAE = mean_absolute_error(test_te_label_list, test_te_results)
-        # # coefficient and 2-tailed p-value
-        # TE_PEARSON = scipy.stats.pearsonr(test_te_label_list.reshape(-1), test_te_results.reshape(-1))
-        # print('Link Prediction Test')
-        # print('TE_MSE = {}'.format(TE_MSE))
-        # print('TE_RMSE = {}'.format(TE_RMSE))
-        # print('TE_MAE = {}'.format(TE_MAE))
-        # print('TE_PEARSON and p-value = {},{}'.format(TE_PEARSON[0],TE_PEARSON[1]))
-
-        # mse_list.append(TE_MSE)
-        # rmse_list.append(TE_RMSE)
-        # mae_list.append(TE_MAE)
-        # pearson_list.append(TE_PEARSON[0])
-
         # 计算 ROC AUC 和 PR AUC
         roc_auc = roc_auc_score(test_te_label_list, test_te_results)
         pr_auc = average_precision_score(test_te_label_list, test_te_results)
         #
         # # 计算 ACC
-        # threshold = 0.5  # 设定阈值
+        # threshold = 0.5 
         # binary_predictions = (test_te_results > threshold).astype(int)
         # accuracy = accuracy_score(test_te_label_list, binary_predictions)
 
-        #binary_pred = np.where(test_te_results > 0.5, 1, 0)  # 的到的score就是归一化到了0-1范围内 然后pred > 0.5标1，不然标0
-        #accuracy = metrics.accuracy_score(test_te_label_list, binary_pred)  # 比较是否和真实的标签一致
+        #binary_pred = np.where(test_te_results > 0.5, 1, 0) 
+        #accuracy = metrics.accuracy_score(test_te_label_list, binary_pred) 
         # 计算 PREC
         precision = precision_score(test_te_label_list, test_te_results.round())
         accuracy = accuracy_score(test_te_label_list, test_te_results.round())
@@ -482,19 +422,6 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
             test_te_label_list, test_te_results)
         ap_score = average_precision_score(test_te_label_list, test_te_results)
 
-        # plt.figure(figsize=(5, 4))
-        # plt.plot(recall_curve, precision_curve,
-        #          label=f'PR curve (AP=0.93)')
-        # plt.xlabel('Recall')
-        # plt.ylabel('Precision')
-        # plt.xlim(0, 1)
-        # plt.ylim(0, 1)
-        # plt.title('Precision-Recall curve')
-        # plt.legend(loc='lower left')
-        # plt.grid(True, linestyle='--', alpha=0.4)
-        # plt.tight_layout()
-        # plt.show()
-        # 打印结果
         print('ROC AUC =', roc_auc)
         print('PR AUC =', pr_auc)
         print('ACC =', accuracy)
@@ -502,23 +429,14 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         print('RECALL =', recall)
         print('F1 =', f1)
 
-
-    ## print('----------------------------------------------------------------')
-    ## print('Link Prediction Tests Summary')
-    ## print('MSE_mean = {}'.format(np.mean(mse_list)))
-    ## print('RMSE_mean = {}'.format(np.mean(rmse_list)))
-    ## print('MAE_mean = {}'.format(np.mean(mae_list)))
-    ## print('PEARSON_mean = {}'.format(np.mean(pearson_list)))
-
     pd.DataFrame(VAL_L0SS, columns=['VAL_LOSS']).to_csv(root_prefix+'checkpoint/VAL_LOSS.csv')
 
 
 if __name__ == '__main__':
-    ##lr = 0.0001  # 原来是0.005  weight0.001 原0.001 dropout=0.5原0.5
     # part1 (for meta-path embedding generation)
     ap = argparse.ArgumentParser(description='Muthene without AE module variant testing for drug-drug link prediction')
     ap.add_argument('--root-prefix', type=str,
-                    default='E:/Muthene-main/echino_dataset/fold2/', # the folder to store the model input for current independent repeat
+                    default='./Muthene-main/data/fold/', # the folder to store the model input for current independent repeat
                     help='root from which to read the original input files')
     ap.add_argument('--hidden-dim-main', type=int, default=64,
                     help='Dimension of the node hidden state in the main model. Default is 64.')
@@ -529,16 +447,16 @@ if __name__ == '__main__':
     ap.add_argument('--rnn-type-main', default='rnn',
                     help='Type of the aggregator in the main model. Default is rnn.')
     ap.add_argument('--epoch', type=int, default=50, help='Number of epochs. Default is 50.')
-    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')##原来是8 改成8试试
-    ap.add_argument('--batch-size', type=int, default=16,##原来是32
+    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')
+    ap.add_argument('--batch-size', type=int, default=16,
                     help='Batch size. Please choose an odd value, because of the way of calculating val/test labels of our model. Default is 32.')
-    ap.add_argument('--samples', type=int, default=50, #采样的邻居节点数 原来是100
+    ap.add_argument('--samples', type=int, default=50, #采样的邻居节点数 
                     help='Number of neighbors sampled in the parse function of main model. Default is 100.')
     ap.add_argument('--repeat', type=int, default=1, help='Repeat the training and testing for N times. Default is 1.')
     # if it is set to False, the GAT layer will ignore the feature of the central node itself
     ap.add_argument('--attn-switch-main', default=True,
                     help='whether need to consider the feature of the central node when using GAT layer in the main model')
-    ap.add_argument('--rnn-concat-main', default=False,##原来是false
+    ap.add_argument('--rnn-concat-main', default=False,
                     help='whether need to concat the feature extracted from rnn with the embedding from GAT layer in the main model')
     # part2 (for other modules in HNEMA)
     ap.add_argument('--whether-CCLE', default=[True, False],
