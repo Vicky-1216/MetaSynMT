@@ -37,16 +37,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.enabled = False
 print('random_seed:', random_seed)
-# import random
-# random.seed()  # 使用系统时间作为种子
-# random_seed = random.randint(0, 2**31 - 1)
-# print('random_seed:', random_seed)
 # some overall fixed parameters
 # drug/target/
 num_ntype = 3#3
 # for the main_net
 dropout_rate = 0.5
-lr = 0.0005 #原来是0.005
+lr = 0.0005 
 weight_decay = 0.001
 
 # the aim of use_masks is to mask drug-drug pairs occurring in the batch, which contains these pairs as the known samples
@@ -406,8 +402,8 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         # binary_predictions = (test_te_results > threshold).astype(int)
         # accuracy = accuracy_score(test_te_label_list, binary_predictions)
 
-        #binary_pred = np.where(test_te_results > 0.5, 1, 0)  # 的到的score就是归一化到了0-1范围内 然后pred > 0.5标1，不然标0
-        #accuracy = metrics.accuracy_score(test_te_label_list, binary_pred)  # 比较是否和真实的标签一致
+        #binary_pred = np.where(test_te_results > 0.5, 1, 0) 
+        #accuracy = metrics.accuracy_score(test_te_label_list, binary_pred)  
         # 计算 PREC
         precision = precision_score(test_te_label_list, test_te_results.round())
         accuracy = accuracy_score(test_te_label_list, test_te_results.round())
@@ -430,7 +426,6 @@ def run_model_HNEMA_DDI(root_prefix, hidden_dim_main, num_heads_main, attnvec_di
         # plt.grid(True, linestyle='--', alpha=0.4)
         # plt.tight_layout()
         # plt.show()
-        # 打印结果
         print('ROC AUC =', roc_auc)
         print('PR AUC =', pr_auc)
         print('ACC =', accuracy)
@@ -445,7 +440,7 @@ if __name__ == '__main__':
     # part1 (for meta-path embedding generation)
     ap = argparse.ArgumentParser(description='Muthene without AE module variant testing for drug-drug link prediction')
     ap.add_argument('--root-prefix', type=str,
-                    default='E:/Muthene-main/echino_dataset/fold2/', # the folder to store the model input for current independent repeat
+                    default='./data/fold/', # the folder to store the model input for current independent repeat
                     help='root from which to read the original input files')
     ap.add_argument('--hidden-dim-main', type=int, default=64,
                     help='Dimension of the node hidden state in the main model. Default is 64.')
@@ -456,16 +451,16 @@ if __name__ == '__main__':
     ap.add_argument('--rnn-type-main', default='rnn',
                     help='Type of the aggregator in the main model. Default is rnn.')
     ap.add_argument('--epoch', type=int, default=50, help='Number of epochs. Default is 50.')
-    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')##原来是8 改成8试试
-    ap.add_argument('--batch-size', type=int, default=16,##原来是32
+    ap.add_argument('--patience', type=int, default=8, help='Patience. Default is 10.')
+    ap.add_argument('--batch-size', type=int, default=16,
                     help='Batch size. Please choose an odd value, because of the way of calculating val/test labels of our model. Default is 32.')
-    ap.add_argument('--samples', type=int, default=50, #采样的邻居节点数 原来是100
+    ap.add_argument('--samples', type=int, default=50, #采样的邻居节点数 
                     help='Number of neighbors sampled in the parse function of main model. Default is 100.')
     ap.add_argument('--repeat', type=int, default=1, help='Repeat the training and testing for N times. Default is 1.')
     # if it is set to False, the GAT layer will ignore the feature of the central node itself
     ap.add_argument('--attn-switch-main', default=True,
                     help='whether need to consider the feature of the central node when using GAT layer in the main model')
-    ap.add_argument('--rnn-concat-main', default=False,##原来是false
+    ap.add_argument('--rnn-concat-main', default=False,
                     help='whether need to concat the feature extracted from rnn with the embedding from GAT layer in the main model')
     # part2
     ap.add_argument('--whether-disease', default=[True, False],
