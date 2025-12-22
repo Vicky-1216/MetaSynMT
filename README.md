@@ -15,11 +15,11 @@ Tutorial introduction:
 1.Anaconda (https://www.anaconda.com/) 3.Pycharm (https://www.jetbrains.com/pycharm/download/) 2.Git(https://github.com/)
 
 ## Packages Requirements
-#⦁	Python >= 3.9
-#⦁	Pytorch >= 1.10
-#⦁	dgl >= 11.0
-#⦁ sklearn >= 1.0.2
-#⦁ pandas >= 1.3.5
+⦁	Python >= 3.9
+⦁	Pytorch >= 1.10
+⦁	dgl >= 11.0
+⦁ sklearn >= 1.0.2
+⦁ pandas >= 1.3.5
 
 ## Configuration Parameters:
 The configuration Settings for hyperparameters and training have been fixed in the training script, including:
