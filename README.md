@@ -1,13 +1,14 @@
-# The MetaSynMT model and tutorial introduction
+## The MetaSynMT model and tutorial introduction
 Prediction of Synergistic and Safe Drug Combinations for Parasitic Diseases Via Meta-path Information Aggregation and Multi-task Learning
 we propose a novel multi-task learning model, MetaSynMT, based on a meta-path aggregation mechanism to predict synergistic and safe drug combinations.
 This mechanism effectively captures drug features by enhancing both structural and high-order semantic representations.
 In addition to the primary task of synergy prediction, a side effect prediction task is introduced as an auxiliary task to jointly identify drug combinations with strong synergy and low toxicity.
 <img src="./figure.png" width="900">
-#1.Download the MetaSyn.zip file.
-#2.Configure the conda environment in PyCharm.
-#3.Install the required packages.
-#4.Run the end-to-end script file ModelTrain.py to train the model.
+
+1.Download the MetaSyn.zip file.
+2.Configure the conda environment in PyCharm.
+3.Install the required packages.
+4.Run the end-to-end script file ModelTrain.py to train the model.
 
 ## Install Application:
 1.Anaconda (https://www.anaconda.com/) 3.Pycharm (https://www.jetbrains.com/pycharm/download/) 2.Git(https://github.com/)
