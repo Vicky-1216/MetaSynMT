@@ -5,6 +5,7 @@ This mechanism effectively captures drug features by enhancing both structural a
 In addition to the primary task of synergy prediction, a side effect prediction task is introduced as an auxiliary task to jointly identify drug combinations with strong synergy and low toxicity.
 <img src="./figure.png" width="900">
 
+tutorial introduction:
 1.Download the MetaSyn.zip file.
 2.Configure the conda environment in PyCharm.
 3.Install the required packages.
